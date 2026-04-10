@@ -411,15 +411,13 @@
         <h2 class="hero-title">Converse com Tricia</h2>
         <p class="hero-subtitle">
           Interface personalizada em tema escuro, com histórico local, rewind e nova resposta.
-          Porque sofrer com chat feio já é humilhação demais.
         </p>
       </div>
 
       <main id="chat" class="chat">
         <div class="welcome" id="welcomeCard">
           <strong>Bem-vindo.</strong><br><br>
-          Esta é a Tricia AI. Ela responde com presença, memória local de sessão e um mínimo de paciência.
-          Use os botões abaixo para voltar uma interação, pedir nova resposta ou limpar a conversa inteira.
+          Esta é a Tricia AI. Ela responde com memória por sessão no navegador e deve se comportar de forma muito mais consistente agora.
         </div>
       </main>
 
@@ -468,6 +466,15 @@
     const rewindBtn = document.getElementById("rewindBtn");
     const retryBtn = document.getElementById("retryBtn");
     const welcomeCard = document.getElementById("welcomeCard");
+
+    function getSessionId() {
+      let sessionId = localStorage.getItem("tricia_session_id");
+      if (!sessionId) {
+        sessionId = "tricia-" + crypto.randomUUID();
+        localStorage.setItem("tricia_session_id", sessionId);
+      }
+      return sessionId;
+    }
 
     function escapeHtml(text) {
       const div = document.createElement("div");
@@ -584,7 +591,10 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            question: message
+            question: message,
+            overrideConfig: {
+              sessionId: getSessionId()
+            }
           })
         });
 
